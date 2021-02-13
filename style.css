@@ -21,7 +21,7 @@ body {
   }
   .header {
     width: auto;
-    border-bottom: 3pt solid pink;
+    border-bottom: 3pt solid #3e8998;
     padding: 0px 100px;
     margin-bottom: 100px;
   }
