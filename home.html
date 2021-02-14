@@ -65,13 +65,26 @@
     </select>
     <div class = "data">
       <h2>Deaths</h2>
-        <break></break>
+        <p id = "Death" style="display:none">2 million</p>
         <break></break>
         <h2>Confirmed cases</h2>
-      <button id="search-btn">Search Statewide statistics</button>
+        <p id = "Cases" style="display:none">8 million</p>
+      <button id="search-btn" onclick="showHide()">Search Statewide statistics</button>
     </div>
   </div>
   <script>
     var covidApi = "https://api.covidtracking.com/v1/status.json";
+    function showHide() {
+      var x = document.getElementById('Death');
+      var y = document.getElementById('Cases');
+      if (x.style.display == 'none' && y.style.display == 'none'){
+        x.style.display = 'block';
+        y.style.display = 'block';
+      } else {
+        x.style.display = 'none';
+        y.style.display = 'none';
+      }
+    }
+
   </script>
 </body>
