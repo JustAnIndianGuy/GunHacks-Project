@@ -69,7 +69,7 @@
         <break></break>
         <h2>Confirmed cases</h2>
         <p id = "Cases" style="display:none">8 million</p>
-      <button id="search-btn" onclick="showHide()">Search Statewide statistics</button>
+      <button id="search-btn" onclick="showHide(), clearData()">Search Statewide statistics</button>
     </div>
   </div>
   <script>
@@ -80,11 +80,17 @@
       if (x.style.display == 'none' && y.style.display == 'none'){
         x.style.display = 'block';
         y.style.display = 'block';
-        $("#search-btn").html("Clear statistics");
       } else {
         x.style.display = 'none';
         y.style.display = 'none';
-        $("#search-btn").html("Search Statewide statistics");
+      }
+    }
+    function clearData() {
+      var btn = document.getElementById('search-btn');
+      if (btn.innerHTML == "Search Statewide statistics"){
+        btn.innerHTML = "Clear statistics"  
+      }else{
+        btn.innerHTML = "Search Statewide statistics"
       }
     }
 
