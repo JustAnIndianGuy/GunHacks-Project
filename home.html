@@ -1,16 +1,137 @@
 <html>
+
 <head>
-  <title>Tutorial Website</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Quiz</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="main-container">
-    <div class="header">
-      <h1>My Website</h1>
-    </div>
-    <div class="main-content">
-      <p>This is a test website!</p>
-    </div>
-</div>
+  <h1>Quiz Time</h1>
+
+  <div class="container" id="quiz-menu">
+    <p>Difficulty:</p>
+    <select id="level">
+      <option>easy</option>
+      <option>medium</option>
+      <option>hard</option>
+    </select>
+
+    <p>Choose a category:</p>
+    <select id="selected-category">
+      <option value="">Any Category</option>
+    </select>
+
+    <p>Total number of questions:</p>
+    <input type="number" id="question-count" value="10">
+    <button id="start-btn">Start Quiz</button>
+
+    <p id="fact"></p>
+  </div>
+
+  <div class="container" id="quiz">
+    <p id="ques"></p>
+    <div id="choices"></div>
+  </div>
+
+
+  <script>
+    $('#quiz').hide();
+    var quizApi = "https://opentdb.com/api.php";
+    var quizCategories = "https://opentdb.com/api_category.php";
+    var quizCount = "https://opentdb.com/api_count.php";
+
+    $.ajax({
+      url: quizCategories
+    }).then(showCategories);
+
+    function showCategories(data) {
+      var categories = data.trivia_categories;
+      for (c of categories) {
+        var optionHtml = "<option value=" + c.id + ">" + c.name + "</option>";
+        $('#selected-category').append(optionHtml);
+      }
+    }
+
+    function sendRequest(){
+      $('#quiz-menu').hide();
+      $('#quiz').show();
+      var inputData = {
+        difficulty: $('#level').val(),
+        category: $('#selected-category').val(),
+        amount: $('#question-count').val()
+      }
+      $.ajax({
+        url:quizApi,
+        data: inputData
+      }).then(showQues);
+    }
+    $('#start-btn').click(sendRequest);
+
+    function showQues(data){
+      console.log(data);
+    }
+
+    $('#selected-category').change(funFact);
+
+    function funFact() {
+      $("#fact").text("");
+      var catData = {
+        category: $('#selected-category').val()
+      };
+      $.ajax({
+        url: quizCount,
+        data: catData
+      }).then(showFact);
+    }
+
+    function showFact(data) {
+      var count = data.category_question_count.total_question_count;
+      $("#fact").text("Fun fact: There are " + count + " questions in this category.");
+    }
+    var questions, correctAnswer;
+    var count = 0;
+    function showQues(data){
+      console.log(data);
+      questions = data.results;
+      show(questions[count]);
+    }
+    function show(qObj) {
+      $('#choices').html("");
+      $("#ques").html(qObj.question);
+      var choices = qObj.incorrect_answers;
+      correctAnswer = qObj.correct_answer;
+      var num = Math.random() * choices.length;
+      var random = Math.floor(num);
+      var randomChoice = choices[random];
+      choices[random] = correctAnswer;
+      choices.push(randomChoice);
+      for (c of choices) {
+        $('#choices').append("<p class='answer-options'>"
+                              + c + "</p>");
+      }
+      $('.answer-options').click(check);
+    }
+    function check(event) {
+      var clickedAnswer = $(event.currentTarget).text();
+      if (clickedAnswer == correctAnswer) {
+        count++;
+        $('#soundI')[0].play();
+        if (count < questions.length) {
+          show(questions[count]);
+        } else {
+          var output = "<h1>Perfect Score!!</h1>"
+          output += "<p>You answered all questions</p>";
+          $('#quiz').html(output);
+        }
+      } else {
+        $('#soundL')[0].play();
+        var output = "<h1>Game Over!!</h1>"
+        output += "<p>You scored " + count +
+          " out of " + questions.length +
+          " </p>";
+        $('#quiz').html(output);
+      }
+    }
+
+  </script>
 </body>
-</html>
